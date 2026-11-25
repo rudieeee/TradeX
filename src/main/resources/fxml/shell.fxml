@@ -18,6 +18,8 @@
   </left>
   <top>
     <HBox styleClass="topbar" alignment="CENTER_RIGHT" spacing="8">
+      <Label fx:id="feedLabel" styleClass="muted"/>
+      <Region prefWidth="24"/>
       <Label text="Wallet" styleClass="muted"/>
       <Label fx:id="balanceLabel" styleClass="balance"/>
     </HBox>

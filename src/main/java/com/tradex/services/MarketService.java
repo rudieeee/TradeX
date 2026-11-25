@@ -26,7 +26,10 @@ public class MarketService {
     /** Daily closes for the chart, ending with the live price. */
     public List<PricePoint> getHistory(String symbol, Stock current) throws DataAccessException {
         List<PricePoint> pts = new ArrayList<>(history.history(symbol, HISTORY_DAYS));
-        pts.add(new PricePoint(LocalDateTime.now(), current.currentPrice()));
+        LocalDateTime now = LocalDateTime.now();
+        // Today's stored row is replaced by the live point.
+        if (!pts.isEmpty() && pts.get(pts.size() - 1).time().toLocalDate().equals(now.toLocalDate())) pts.remove(pts.size() - 1);
+        pts.add(new PricePoint(now, current.currentPrice()));
         return pts;
     }
 
@@ -34,15 +37,25 @@ public class MarketService {
     public void ensureHistory() throws DataAccessException {
         if (history.count() > 0) return;
         List<Object[]> rows = new ArrayList<>();
-        for (Stock s : stocks.findAll()) {
-            Random rnd = new Random(s.symbol().hashCode());
-            double p = s.currentPrice().doubleValue() * (1 + rnd.nextGaussian() * 0.01); // yesterday's close
-            for (int d = 1; d <= HISTORY_DAYS; d++) {
-                rows.add(new Object[]{s.symbol(), BigDecimal.valueOf(p).setScale(2, RoundingMode.HALF_UP),
-                        LocalDate.now().minusDays(d).atTime(15, 30)});
-                p = p / (1 + rnd.nextGaussian() * 0.012);
-            }
-        }
+        for (Stock s : stocks.findAll()) rows.addAll(walk(s.symbol(), s.currentPrice()));
         history.insertBatch(rows);
+    }
+
+    /** Replaces a symbol's history with a new walk anchored at {@code price} (used when stored data is stale). */
+    public void reseed(String symbol, BigDecimal price) throws DataAccessException {
+        history.deleteFor(symbol);
+        history.insertBatch(walk(symbol, price));
+    }
+
+    private static List<Object[]> walk(String symbol, BigDecimal price) {
+        List<Object[]> rows = new ArrayList<>();
+        Random rnd = new Random(symbol.hashCode());
+        double p = price.doubleValue() * (1 + rnd.nextGaussian() * 0.01); // yesterday's close
+        for (int d = 1; d <= HISTORY_DAYS; d++) {
+            rows.add(new Object[]{symbol, BigDecimal.valueOf(p).setScale(2, RoundingMode.HALF_UP),
+                    LocalDate.now().minusDays(d).atTime(15, 30)});
+            p = p / (1 + rnd.nextGaussian() * 0.012);
+        }
+        return rows;
     }
 }

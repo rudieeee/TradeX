@@ -24,6 +24,16 @@ class TradingServiceIT {
         catch (Exception e) { Assumptions.abort("MySQL not available"); }
     }
 
+    /** Pin the prices these tests rely on; the live updater may have changed them. */
+    @BeforeEach void pinPrices() throws Exception {
+        try (Connection c = Database.getConnection(); Statement st = c.createStatement()) {
+            st.executeUpdate("UPDATE stocks SET current_price = 3900 WHERE symbol = 'TCS'");
+            st.executeUpdate("UPDATE stocks SET current_price = 430 WHERE symbol = 'ITC'");
+            st.executeUpdate("UPDATE stocks SET current_price = 12500 WHERE symbol = 'MARUTI'");
+            st.executeUpdate("UPDATE stocks SET current_price = 1650 WHERE symbol = 'INFY'");
+        }
+    }
+
     @BeforeEach void user() throws Exception {
         uid = new AuthService(new UserRepository()).register(name, name + "@example.com", "password123").getId();
     }

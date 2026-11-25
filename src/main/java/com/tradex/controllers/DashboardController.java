@@ -4,6 +4,8 @@ import com.tradex.models.Quote;
 import com.tradex.services.MarketService;
 import com.tradex.services.PortfolioService;
 import com.tradex.utils.*;
+import javafx.beans.InvalidationListener;
+import javafx.beans.WeakInvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.chart.PieChart;
@@ -27,6 +29,13 @@ public class DashboardController {
         Tables.text(trending, "Price", q -> Fmt.money(q.price()));
         Tables.signed(trending, "Change", q -> Fmt.pct(q.changePct()), q -> q.change().signum());
 
+        PriceFeed.tickProperty().addListener(new WeakInvalidationListener(tickListener));
+        refresh();
+    }
+
+    private final InvalidationListener tickListener = o -> refresh();
+
+    private void refresh() {
         long uid = Session.getCurrentUser().getId();
         Async.run(() -> portfolio.getSummary(uid), s -> {
             cashLabel.setText(Fmt.money(s.cash()));

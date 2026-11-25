@@ -61,4 +61,34 @@ public class PriceHistoryRepository {
             }
         } catch (SQLException e) { throw SqlSupport.wrap("Failed to load history", e); }
     }
+
+    /** Keeps one row per symbol per day: updates today's row if present, otherwise inserts it. */
+    public void upsertToday(Map<String, BigDecimal> prices, LocalDateTime now) throws DataAccessException {
+        Timestamp dayStart = Timestamp.valueOf(now.toLocalDate().atStartOfDay());
+        try (Connection c = Database.getConnection();
+             PreparedStatement upd = c.prepareStatement("UPDATE price_history SET price = ?, recorded_at = ? WHERE symbol = ? AND recorded_at >= ?");
+             PreparedStatement ins = c.prepareStatement("INSERT INTO price_history (symbol, price, recorded_at) VALUES (?, ?, ?)")) {
+            c.setAutoCommit(false);
+            for (var e : prices.entrySet()) {
+                upd.setBigDecimal(1, e.getValue());
+                upd.setTimestamp(2, Timestamp.valueOf(now));
+                upd.setString(3, e.getKey());
+                upd.setTimestamp(4, dayStart);
+                if (upd.executeUpdate() == 0) {
+                    ins.setString(1, e.getKey());
+                    ins.setBigDecimal(2, e.getValue());
+                    ins.setTimestamp(3, Timestamp.valueOf(now));
+                    ins.executeUpdate();
+                }
+            }
+            c.commit();
+        } catch (SQLException e) { throw SqlSupport.wrap("Failed to record prices", e); }
+    }
+
+    public void deleteFor(String symbol) throws DataAccessException {
+        try (Connection c = Database.getConnection(); PreparedStatement ps = c.prepareStatement("DELETE FROM price_history WHERE symbol = ?")) {
+            ps.setString(1, symbol);
+            ps.executeUpdate();
+        } catch (SQLException e) { throw SqlSupport.wrap("Failed to clear history", e); }
+    }
 }

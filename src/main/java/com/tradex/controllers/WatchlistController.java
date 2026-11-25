@@ -3,6 +3,8 @@ package com.tradex.controllers;
 import com.tradex.models.Quote;
 import com.tradex.services.*;
 import com.tradex.utils.*;
+import javafx.beans.InvalidationListener;
+import javafx.beans.WeakInvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -25,8 +27,11 @@ public class WatchlistController {
         Tables.text(table, "Price", q -> Fmt.money(q.price()));
         Tables.signed(table, "Change", q -> Fmt.pct(q.changePct()), q -> q.change().signum());
         removeButton.disableProperty().bind(table.getSelectionModel().selectedItemProperty().isNull());
+        PriceFeed.tickProperty().addListener(new WeakInvalidationListener(tickListener));
         refresh();
     }
+
+    private final InvalidationListener tickListener = o -> refresh();
 
     private void refresh() {
         Async.run(() -> {

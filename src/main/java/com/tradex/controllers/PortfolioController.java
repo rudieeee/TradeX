@@ -3,6 +3,8 @@ package com.tradex.controllers;
 import com.tradex.models.PortfolioRow;
 import com.tradex.services.*;
 import com.tradex.utils.*;
+import javafx.beans.InvalidationListener;
+import javafx.beans.WeakInvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.chart.PieChart;
@@ -30,8 +32,11 @@ public class PortfolioController {
         Tables.signed(table, "P&L", r -> Fmt.signedMoney(r.pnl()), r -> r.pnl().signum());
         Tables.signed(table, "Return", r -> Fmt.pct(r.pnlPct()), r -> r.pnl().signum());
         sellButton.disableProperty().bind(table.getSelectionModel().selectedItemProperty().isNull());
+        PriceFeed.tickProperty().addListener(new WeakInvalidationListener(tickListener));
         refresh();
     }
+
+    private final InvalidationListener tickListener = o -> refresh();
 
     private void refresh() {
         Async.run(() -> portfolio.getSummary(uid), s -> {

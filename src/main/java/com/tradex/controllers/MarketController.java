@@ -3,7 +3,10 @@ package com.tradex.controllers;
 import com.tradex.models.*;
 import com.tradex.services.*;
 import com.tradex.utils.*;
+import javafx.beans.InvalidationListener;
+import javafx.beans.WeakInvalidationListener;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
@@ -26,7 +29,9 @@ public class MarketController {
     private final WatchlistService watchlist = new WatchlistService();
     private final long uid = Session.getCurrentUser().getId();
     private final Set<String> watched = new HashSet<>();
+    private final ObservableList<Quote> base = FXCollections.observableArrayList();
     private FilteredList<Quote> filtered;
+    private final InvalidationListener tickListener = o -> reload();
     private Quote selected;
 
     @FXML
@@ -43,19 +48,32 @@ public class MarketController {
         setTradeEnabled(false);
 
         table.getSelectionModel().selectedItemProperty().addListener((o, a, q) -> { if (q != null) select(q); });
+        filtered = new FilteredList<>(base);
+        table.setItems(filtered);
+        search.textProperty().addListener((obs, old, text) -> {
+            String t = text.trim().toLowerCase();
+            filtered.setPredicate(q -> t.isEmpty() || q.symbol().toLowerCase().contains(t)
+                    || q.stock().name().toLowerCase().contains(t));
+        });
+        PriceFeed.tickProperty().addListener(new WeakInvalidationListener(tickListener));
         Async.run(() -> { watched.addAll(watchlist.symbols(uid)); return market.getQuotes(); }, quotes -> {
-            filtered = new FilteredList<>(FXCollections.observableArrayList(quotes));
-            table.setItems(filtered);
-            search.textProperty().addListener((obs, old, text) -> {
-                String t = text.trim().toLowerCase();
-                filtered.setPredicate(q -> t.isEmpty() || q.symbol().toLowerCase().contains(t)
-                        || q.stock().name().toLowerCase().contains(t));
-            });
+            base.setAll(quotes);
             if (!quotes.isEmpty()) table.getSelectionModel().selectFirst();
         }, this::fail);
     }
 
+    /** Refreshes prices after a background update, keeping the current selection. */
+    private void reload() {
+        String keep = selected == null ? null : selected.symbol();
+        Async.run(market::getQuotes, quotes -> {
+            base.setAll(quotes);
+            if (keep != null) quotes.stream().filter(q -> q.symbol().equals(keep)).findFirst()
+                    .ifPresent(q -> table.getSelectionModel().select(q));
+        }, this::fail);
+    }
+
     private void select(Quote q) {
+        boolean sameStock = selected != null && selected.symbol().equals(q.symbol());
         selected = q;
         nameLabel.setText(q.symbol() + " · " + q.stock().name());
         priceLabel.setText(Fmt.money(q.price()));
@@ -64,7 +82,7 @@ public class MarketController {
         if (q.change().signum() != 0) changeLabel.getStyleClass().add(q.change().signum() > 0 ? "pos" : "neg");
         updateWatchButton();
         setTradeEnabled(true);
-        message.setText("");
+        if (!sameStock) message.setText("");
         Async.run(() -> market.getHistory(q.symbol(), q.stock()), pts -> {
             if (selected != q) return; // user moved on
             var series = new XYChart.Series<String, Number>();

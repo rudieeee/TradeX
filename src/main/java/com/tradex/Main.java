@@ -1,6 +1,11 @@
 package com.tradex;
 
+import com.tradex.repositories.PriceHistoryRepository;
+import com.tradex.repositories.StockRepository;
+import com.tradex.services.*;
+import com.tradex.utils.PriceFeed;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,21 +16,27 @@ import java.io.UncheckedIOException;
 
 public class Main extends Application {
     private static Stage stage;
+    private PriceUpdater updater;
 
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
         stage.setTitle("TradeX");
-        // Seed demo price history on first run without blocking startup.
-        Thread seed = new Thread(() -> {
-            try { new com.tradex.services.MarketService().ensureHistory(); }
-            catch (Exception e) { e.printStackTrace(); }
-        }, "history-seed");
-        seed.setDaemon(true);
-        seed.start();
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            System.err.println("Uncaught error in " + t.getName() + ": " + e);
+            e.printStackTrace();
+        });
+        // Fetches live prices every minute (simulated per symbol when unavailable) and seeds history on first run.
+        updater = new PriceUpdater(new YahooFinanceProvider(), new StockRepository(), new PriceHistoryRepository(), new MarketService());
+        updater.start(60, r -> Platform.runLater(() -> PriceFeed.publish(
+                r.isLive() ? (r.simulated() == 0 ? "● Live prices" : "● Live prices (" + r.simulated() + " simulated)")
+                           : "● Simulated prices")));
         showLogin();
         stage.show();
     }
+
+    @Override
+    public void stop() { if (updater != null) updater.stop(); }
 
     public static void showLogin() { setScene("/fxml/login.fxml", 460, 560); }
     public static void showHome() { setScene("/fxml/shell.fxml", 1180, 720); }

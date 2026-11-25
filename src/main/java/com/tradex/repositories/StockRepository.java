@@ -34,4 +34,18 @@ public class StockRepository {
     public List<Stock> findAll() throws DataAccessException {
         return search("");
     }
+
+    public void updatePrices(java.util.Map<String, java.math.BigDecimal> prices) throws DataAccessException {
+        try (Connection c = Database.getConnection();
+             PreparedStatement ps = c.prepareStatement("UPDATE stocks SET current_price = ? WHERE symbol = ?")) {
+            c.setAutoCommit(false);
+            for (var e : prices.entrySet()) {
+                ps.setBigDecimal(1, e.getValue());
+                ps.setString(2, e.getKey());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+            c.commit();
+        } catch (SQLException e) { throw SqlSupport.wrap("Failed to update prices", e); }
+    }
 }

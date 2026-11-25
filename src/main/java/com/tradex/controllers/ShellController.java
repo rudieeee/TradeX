@@ -19,7 +19,7 @@ import java.util.List;
 /** Main window: sidebar navigation, wallet header and the swappable content area. */
 public class ShellController {
     @FXML private BorderPane content;
-    @FXML private Label userLabel, balanceLabel;
+    @FXML private Label userLabel, balanceLabel, feedLabel;
     @FXML private Button navDashboard, navMarket, navPortfolio, navWatchlist, navTransactions;
 
     @FXML
@@ -27,6 +27,7 @@ public class ShellController {
         User u = Session.getCurrentUser();
         userLabel.setText(u.getUsername());
         balanceLabel.textProperty().bind(Session.balanceProperty().map(Fmt::money));
+        feedLabel.textProperty().bind(PriceFeed.statusProperty());
         TradingService trading = new TradingServiceImpl();
         Async.run(() -> trading.getBalance(u.getId()), b -> Session.balanceProperty().set(b), msg -> {});
         show("dashboard", navDashboard);
@@ -41,6 +42,7 @@ public class ShellController {
     @FXML
     private void onLogout() {
         balanceLabel.textProperty().unbind();
+        feedLabel.textProperty().unbind();
         Session.clear();
         Main.showLogin();
     }
