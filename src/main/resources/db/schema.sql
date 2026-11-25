@@ -1,0 +1,75 @@
+CREATE TABLE IF NOT EXISTS users (
+  id            BIGINT AUTO_INCREMENT PRIMARY KEY,
+  username      VARCHAR(50)  NOT NULL UNIQUE,
+  email         VARCHAR(120) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role          ENUM('USER','ADMIN') NOT NULL DEFAULT 'USER',
+  created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS wallets (
+  user_id BIGINT PRIMARY KEY,
+  balance DECIMAL(15,2) NOT NULL DEFAULT 100000.00,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS stocks (
+  symbol        VARCHAR(20) PRIMARY KEY,
+  name          VARCHAR(120) NOT NULL,
+  current_price DECIMAL(12,2) NOT NULL,
+  updated_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS holdings (
+  user_id   BIGINT NOT NULL,
+  symbol    VARCHAR(20) NOT NULL,
+  quantity  INT NOT NULL,
+  avg_price DECIMAL(12,2) NOT NULL,
+  PRIMARY KEY (user_id, symbol),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (symbol) REFERENCES stocks(symbol)
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+  id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id     BIGINT NOT NULL,
+  symbol      VARCHAR(20) NOT NULL,
+  side        ENUM('BUY','SELL') NOT NULL,
+  type        ENUM('MARKET','LIMIT','STOP_LOSS') NOT NULL DEFAULT 'MARKET',
+  quantity    INT NOT NULL,
+  limit_price DECIMAL(12,2) NULL,
+  status      ENUM('PENDING','EXECUTED','CANCELLED','REJECTED') NOT NULL DEFAULT 'PENDING',
+  created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (symbol) REFERENCES stocks(symbol)
+);
+
+CREATE TABLE IF NOT EXISTS transactions (
+  id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+  order_id    BIGINT NOT NULL,
+  user_id     BIGINT NOT NULL,
+  symbol      VARCHAR(20) NOT NULL,
+  side        ENUM('BUY','SELL') NOT NULL,
+  quantity    INT NOT NULL,
+  price       DECIMAL(12,2) NOT NULL,
+  executed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (order_id) REFERENCES orders(id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS watchlists (
+  user_id BIGINT NOT NULL,
+  symbol  VARCHAR(20) NOT NULL,
+  PRIMARY KEY (user_id, symbol),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (symbol) REFERENCES stocks(symbol)
+);
+
+CREATE TABLE IF NOT EXISTS price_history (
+  id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+  symbol      VARCHAR(20) NOT NULL,
+  price       DECIMAL(12,2) NOT NULL,
+  recorded_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_symbol_time (symbol, recorded_at),
+  FOREIGN KEY (symbol) REFERENCES stocks(symbol)
+);

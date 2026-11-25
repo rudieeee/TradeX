@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.tradex.controllers.HomeController"
+      styleClass="root-pane" alignment="CENTER" spacing="16">
+  <Label fx:id="welcome" styleClass="brand"/>
+  <Label text="Dashboard coming in Phase 3." styleClass="tagline"/>
+  <Button text="Log out" onAction="#onLogout" styleClass="primary"/>
+</VBox>

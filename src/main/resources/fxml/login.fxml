@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.tradex.controllers.LoginController"
+      styleClass="root-pane" alignment="CENTER" spacing="16">
+  <Label text="TradeX" styleClass="brand"/>
+  <Label text="Trade smart. Risk nothing." styleClass="tagline"/>
+  <TabPane fx:id="tabs" tabClosingPolicy="UNAVAILABLE" styleClass="card" maxWidth="360">
+    <Tab text="Login">
+      <VBox spacing="12" styleClass="tab-body">
+        <TextField fx:id="loginUser" promptText="Username or email"/>
+        <PasswordField fx:id="loginPass" promptText="Password" onAction="#onLogin"/>
+        <Label fx:id="loginError" styleClass="error" visible="false" wrapText="true"/>
+        <Button fx:id="loginButton" text="Log in" onAction="#onLogin" styleClass="primary" maxWidth="Infinity" defaultButton="true"/>
+      </VBox>
+    </Tab>
+    <Tab text="Register">
+      <VBox spacing="12" styleClass="tab-body">
+        <TextField fx:id="regUser" promptText="Username"/>
+        <TextField fx:id="regEmail" promptText="Email"/>
+        <PasswordField fx:id="regPass" promptText="Password (min 8 characters)"/>
+        <PasswordField fx:id="regConfirm" promptText="Confirm password" onAction="#onRegister"/>
+        <Label fx:id="regError" styleClass="error" visible="false" wrapText="true"/>
+        <Button fx:id="registerButton" text="Create account · ₹1,00,000 virtual cash" onAction="#onRegister" styleClass="primary" maxWidth="Infinity"/>
+      </VBox>
+    </Tab>
+  </TabPane>
+</VBox>

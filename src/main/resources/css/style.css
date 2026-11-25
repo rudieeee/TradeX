@@ -1,0 +1,13 @@
+.root-pane { -fx-background-color: #0f172a; -fx-padding: 24; }
+.brand { -fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #22c55e; }
+.tagline { -fx-text-fill: #94a3b8; -fx-font-size: 14px; }
+.card { -fx-background-color: #1e293b; -fx-background-radius: 12; }
+.tab-body { -fx-padding: 20; }
+.tab-pane > .tab-header-area > .headers-region > .tab { -fx-background-color: #1e293b; }
+.tab-pane > .tab-header-area > .headers-region > .tab:selected { -fx-background-color: #334155; }
+.tab .tab-label { -fx-text-fill: #e2e8f0; }
+.text-field, .password-field { -fx-background-color: #0f172a; -fx-text-fill: #e2e8f0; -fx-prompt-text-fill: #64748b; -fx-background-radius: 8; -fx-padding: 10; }
+.primary { -fx-background-color: #22c55e; -fx-text-fill: #04210f; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10 16; -fx-cursor: hand; }
+.primary:hover { -fx-background-color: #4ade80; }
+.primary:disabled { -fx-opacity: 0.5; }
+.error { -fx-text-fill: #f87171; }
