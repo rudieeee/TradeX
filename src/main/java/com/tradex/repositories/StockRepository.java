@@ -30,4 +30,8 @@ public class StockRepository {
             }
         } catch (SQLException e) { throw SqlSupport.wrap("Failed to search stocks", e); }
     }
+
+    public List<Stock> findAll() throws DataAccessException {
+        return search("");
+    }
 }

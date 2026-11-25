@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.tradex.controllers.TransactionsController" styleClass="view" spacing="16">
+  <Label text="Transactions" styleClass="h1"/>
+  <VBox styleClass="panel" spacing="8" VBox.vgrow="ALWAYS">
+    <TableView fx:id="table" VBox.vgrow="ALWAYS"/>
+    <Label fx:id="message" styleClass="error"/>
+  </VBox>
+</VBox>

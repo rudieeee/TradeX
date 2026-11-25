@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.tradex.controllers.DashboardController" styleClass="view" spacing="16">
+  <Label text="Dashboard" styleClass="h1"/>
+  <Label fx:id="error" styleClass="error" visible="false"/>
+  <HBox spacing="16">
+    <VBox styleClass="stat" HBox.hgrow="ALWAYS"><Label text="Total value" styleClass="muted"/><Label fx:id="valueLabel" styleClass="stat-value" text="–"/></VBox>
+    <VBox styleClass="stat" HBox.hgrow="ALWAYS"><Label text="Cash" styleClass="muted"/><Label fx:id="cashLabel" styleClass="stat-value" text="–"/></VBox>
+    <VBox styleClass="stat" HBox.hgrow="ALWAYS"><Label text="Invested" styleClass="muted"/><Label fx:id="investedLabel" styleClass="stat-value" text="–"/></VBox>
+    <VBox styleClass="stat" HBox.hgrow="ALWAYS"><Label text="Unrealised P&amp;L" styleClass="muted"/><Label fx:id="pnlLabel" styleClass="stat-value" text="–"/></VBox>
+  </HBox>
+  <HBox spacing="16" VBox.vgrow="ALWAYS">
+    <VBox styleClass="panel" spacing="8" HBox.hgrow="ALWAYS">
+      <Label text="Allocation" styleClass="h2"/>
+      <PieChart fx:id="allocation" legendSide="RIGHT" labelsVisible="false" VBox.vgrow="ALWAYS"/>
+    </VBox>
+    <VBox styleClass="panel" spacing="8" HBox.hgrow="ALWAYS">
+      <Label text="Trending today" styleClass="h2"/>
+      <TableView fx:id="trending" VBox.vgrow="ALWAYS"/>
+    </VBox>
+  </HBox>
+</VBox>

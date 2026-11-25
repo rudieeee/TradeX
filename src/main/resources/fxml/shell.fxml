@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.tradex.controllers.ShellController" styleClass="app-root">
+  <left>
+    <VBox styleClass="sidebar" spacing="6" prefWidth="210">
+      <Label text="TradeX" styleClass="logo"/>
+      <Button fx:id="navDashboard" text="Dashboard" onAction="#onDashboard" styleClass="nav" maxWidth="Infinity"/>
+      <Button fx:id="navMarket" text="Market" onAction="#onMarket" styleClass="nav" maxWidth="Infinity"/>
+      <Button fx:id="navPortfolio" text="Portfolio" onAction="#onPortfolio" styleClass="nav" maxWidth="Infinity"/>
+      <Button fx:id="navWatchlist" text="Watchlist" onAction="#onWatchlist" styleClass="nav" maxWidth="Infinity"/>
+      <Button fx:id="navTransactions" text="Transactions" onAction="#onTransactions" styleClass="nav" maxWidth="Infinity"/>
+      <Region VBox.vgrow="ALWAYS"/>
+      <Label fx:id="userLabel" styleClass="muted"/>
+      <Button text="Log out" onAction="#onLogout" styleClass="ghost" maxWidth="Infinity"/>
+    </VBox>
+  </left>
+  <top>
+    <HBox styleClass="topbar" alignment="CENTER_RIGHT" spacing="8">
+      <Label text="Wallet" styleClass="muted"/>
+      <Label fx:id="balanceLabel" styleClass="balance"/>
+    </HBox>
+  </top>
+  <center>
+    <BorderPane fx:id="content"/>
+  </center>
+</BorderPane>

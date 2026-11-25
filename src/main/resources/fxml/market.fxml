@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.tradex.controllers.MarketController" styleClass="view" spacing="16">
+  <VBox styleClass="panel" spacing="8" prefWidth="460" minWidth="360">
+    <Label text="Market" styleClass="h1"/>
+    <TextField fx:id="search" promptText="Search by symbol or name"/>
+    <TableView fx:id="table" VBox.vgrow="ALWAYS"/>
+  </VBox>
+  <VBox styleClass="panel" spacing="10" HBox.hgrow="ALWAYS">
+    <Label fx:id="nameLabel" styleClass="h2" text="Select a stock"/>
+    <HBox spacing="12" alignment="BASELINE_LEFT">
+      <Label fx:id="priceLabel" styleClass="stat-value"/>
+      <Label fx:id="changeLabel"/>
+    </HBox>
+    <LineChart fx:id="chart" VBox.vgrow="ALWAYS" title="Last 60 days">
+      <xAxis><CategoryAxis tickLabelsVisible="true"/></xAxis>
+      <yAxis><NumberAxis fx:id="yAxis" side="LEFT"/></yAxis>
+    </LineChart>
+    <HBox spacing="10" alignment="CENTER_LEFT">
+      <TextField fx:id="qty" text="1" prefWidth="90" promptText="Qty"/>
+      <Button fx:id="buyButton" text="Buy" onAction="#onBuy" styleClass="primary"/>
+      <Button fx:id="sellButton" text="Sell" onAction="#onSell" styleClass="danger"/>
+      <Region HBox.hgrow="ALWAYS"/>
+      <Button fx:id="watchButton" text="☆ Add to watchlist" onAction="#onToggleWatch" styleClass="ghost"/>
+    </HBox>
+    <Label fx:id="message" wrapText="true"/>
+  </VBox>
+</HBox>

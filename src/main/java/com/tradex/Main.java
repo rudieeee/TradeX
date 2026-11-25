@@ -16,12 +16,19 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         stage = primaryStage;
         stage.setTitle("TradeX");
+        // Seed demo price history on first run without blocking startup.
+        Thread seed = new Thread(() -> {
+            try { new com.tradex.services.MarketService().ensureHistory(); }
+            catch (Exception e) { e.printStackTrace(); }
+        }, "history-seed");
+        seed.setDaemon(true);
+        seed.start();
         showLogin();
         stage.show();
     }
 
     public static void showLogin() { setScene("/fxml/login.fxml", 460, 560); }
-    public static void showHome() { setScene("/fxml/home.fxml", 900, 600); }
+    public static void showHome() { setScene("/fxml/shell.fxml", 1180, 720); }
 
     private static void setScene(String fxml, double w, double h) {
         try {

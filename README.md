@@ -17,6 +17,6 @@ Override DB settings with `TRADEX_DB_URL`, `TRADEX_DB_USER`, `TRADEX_DB_PASSWORD
 ## Progress
 - [x] Phase 1: project setup, MySQL schema, login/registration (PBKDF2 password hashing)
 - [x] Phase 2: wallet, buy/sell engine (atomic, row-locked), transaction history
-- [ ] Phase 3: dashboard, portfolio, watchlist, charts
+- [x] Phase 3: dashboard, market + price charts + trading, portfolio, watchlist, transactions, CSS theme
 - [ ] Phase 4: market API, background price updates
 - [ ] Phase 5: limit/stop-loss orders, leaderboard, analytics

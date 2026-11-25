@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.tradex.controllers.PortfolioController" styleClass="view" spacing="16">
+  <Label text="Portfolio" styleClass="h1"/>
+  <HBox spacing="16">
+    <VBox styleClass="stat" HBox.hgrow="ALWAYS"><Label text="Invested" styleClass="muted"/><Label fx:id="investedLabel" styleClass="stat-value" text="–"/></VBox>
+    <VBox styleClass="stat" HBox.hgrow="ALWAYS"><Label text="Current value" styleClass="muted"/><Label fx:id="valueLabel" styleClass="stat-value" text="–"/></VBox>
+    <VBox styleClass="stat" HBox.hgrow="ALWAYS"><Label text="P&amp;L" styleClass="muted"/><Label fx:id="pnlLabel" styleClass="stat-value" text="–"/></VBox>
+  </HBox>
+  <HBox spacing="16" VBox.vgrow="ALWAYS">
+    <VBox styleClass="panel" spacing="8" HBox.hgrow="ALWAYS">
+      <Label text="Holdings" styleClass="h2"/>
+      <TableView fx:id="table" VBox.vgrow="ALWAYS"/>
+      <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="sellQty" promptText="Qty (blank = all)" prefWidth="150"/>
+        <Button fx:id="sellButton" text="Sell selected" onAction="#onSell" styleClass="danger"/>
+        <Label fx:id="message" wrapText="true"/>
+      </HBox>
+    </VBox>
+    <VBox styleClass="panel" spacing="8" prefWidth="340">
+      <Label text="Allocation" styleClass="h2"/>
+      <PieChart fx:id="allocation" legendSide="BOTTOM" labelsVisible="false" VBox.vgrow="ALWAYS"/>
+    </VBox>
+  </HBox>
+</VBox>
