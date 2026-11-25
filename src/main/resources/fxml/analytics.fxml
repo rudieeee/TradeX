@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.tradex.controllers.AnalyticsController" styleClass="view" spacing="16">
+  <Label text="Analytics" styleClass="h1"/>
+  <HBox spacing="16">
+    <VBox styleClass="stat" HBox.hgrow="ALWAYS"><Label text="Total return" styleClass="muted"/><Label fx:id="returnLabel" styleClass="stat-value" text="–"/></VBox>
+    <VBox styleClass="stat" HBox.hgrow="ALWAYS"><Label text="Realised P&amp;L" styleClass="muted"/><Label fx:id="realizedLabel" styleClass="stat-value" text="–"/></VBox>
+    <VBox styleClass="stat" HBox.hgrow="ALWAYS"><Label text="Unrealised P&amp;L" styleClass="muted"/><Label fx:id="unrealizedLabel" styleClass="stat-value" text="–"/></VBox>
+    <VBox styleClass="stat" HBox.hgrow="ALWAYS"><Label text="Win rate" styleClass="muted"/><Label fx:id="winRateLabel" styleClass="stat-value" text="–"/></VBox>
+    <VBox styleClass="stat" HBox.hgrow="ALWAYS"><Label text="Trades" styleClass="muted"/><Label fx:id="tradesLabel" styleClass="stat-value" text="–"/></VBox>
+  </HBox>
+  <HBox spacing="16" VBox.vgrow="ALWAYS">
+    <VBox styleClass="panel" spacing="8" HBox.hgrow="ALWAYS">
+      <Label text="Portfolio value over time" styleClass="h2"/>
+      <LineChart fx:id="valueChart" VBox.vgrow="ALWAYS">
+        <xAxis><CategoryAxis/></xAxis>
+        <yAxis><NumberAxis fx:id="valueAxis" side="LEFT"/></yAxis>
+      </LineChart>
+    </VBox>
+    <VBox styleClass="panel" spacing="8" prefWidth="380">
+      <Label text="Unrealised P&amp;L by holding" styleClass="h2"/>
+      <BarChart fx:id="pnlChart" VBox.vgrow="ALWAYS">
+        <xAxis><CategoryAxis/></xAxis>
+        <yAxis><NumberAxis side="LEFT"/></yAxis>
+      </BarChart>
+    </VBox>
+  </HBox>
+  <Label fx:id="message" styleClass="error"/>
+</VBox>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.tradex.controllers.AdminController" styleClass="view" spacing="16">
+  <Label text="Admin panel" styleClass="h1"/>
+  <VBox styleClass="panel" spacing="8" VBox.vgrow="ALWAYS">
+    <Label text="Users" styleClass="h2"/>
+    <TableView fx:id="users" VBox.vgrow="ALWAYS"/>
+    <HBox spacing="10" alignment="CENTER_LEFT">
+      <Button fx:id="resetButton" text="Reset account" onAction="#onReset" styleClass="ghost"/>
+      <Button fx:id="deleteButton" text="Delete user" onAction="#onDelete" styleClass="danger"/>
+      <Label fx:id="message" styleClass="error"/>
+    </HBox>
+  </VBox>
+  <VBox styleClass="panel" spacing="8" VBox.vgrow="ALWAYS">
+    <Label text="Recent activity" styleClass="h2"/>
+    <TableView fx:id="activity" VBox.vgrow="ALWAYS"/>
+  </VBox>
+</VBox>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.tradex.controllers.OrdersController" styleClass="view" spacing="16">
+  <Label text="Orders" styleClass="h1"/>
+  <Label text="Limit and stop-loss orders execute automatically at the market price once triggered. They do not reserve cash or shares: if you no longer have them at trigger time the order is rejected." styleClass="muted" wrapText="true"/>
+  <VBox styleClass="panel" spacing="8" VBox.vgrow="ALWAYS">
+    <TableView fx:id="table" VBox.vgrow="ALWAYS"/>
+    <HBox spacing="10" alignment="CENTER_LEFT">
+      <Button fx:id="cancelButton" text="Cancel selected" onAction="#onCancel" styleClass="ghost"/>
+      <Label fx:id="message" styleClass="error"/>
+    </HBox>
+  </VBox>
+</VBox>

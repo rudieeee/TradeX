@@ -20,7 +20,9 @@
       <yAxis><NumberAxis fx:id="yAxis" side="LEFT"/></yAxis>
     </LineChart>
     <HBox spacing="10" alignment="CENTER_LEFT">
-      <TextField fx:id="qty" text="1" prefWidth="90" promptText="Qty"/>
+      <ChoiceBox fx:id="orderType"/>
+      <TextField fx:id="qty" text="1" prefWidth="70" promptText="Qty"/>
+      <TextField fx:id="priceField" prefWidth="130"/>
       <Button fx:id="buyButton" text="Buy" onAction="#onBuy" styleClass="primary"/>
       <Button fx:id="sellButton" text="Sell" onAction="#onSell" styleClass="danger"/>
       <Region HBox.hgrow="ALWAYS"/>

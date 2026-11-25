@@ -25,7 +25,13 @@ public class PriceUpdater {
     private final PriceHistoryRepository history;
     private final MarketService market;
     private final Random rnd = new Random();
+    private final List<Hook> hooks = new CopyOnWriteArrayList<>();
     private ScheduledExecutorService scheduler;
+
+    /** Work to run after each price update (e.g. trigger pending orders, record snapshots). */
+    public interface Hook { void run() throws TradeXException; }
+
+    public void addHook(Hook hook) { hooks.add(hook); }
 
     public PriceUpdater(MarketDataProvider provider, StockRepository stocks, PriceHistoryRepository history, MarketService market) {
         this.provider = provider;
@@ -78,6 +84,10 @@ public class PriceUpdater {
         stocks.updatePrices(updated);
         market.ensureHistory();
         history.upsertToday(updated, LocalDateTime.now());
+        for (Hook h : hooks) {
+            try { h.run(); }
+            catch (Exception e) { System.err.println("Post-update hook failed: " + e.getMessage()); }
+        }
         return new Result(liveCount, current.size() - liveCount);
     }
 }

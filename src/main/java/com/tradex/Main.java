@@ -1,6 +1,7 @@
 package com.tradex;
 
 import com.tradex.repositories.PriceHistoryRepository;
+import com.tradex.repositories.SnapshotRepository;
 import com.tradex.repositories.StockRepository;
 import com.tradex.services.*;
 import com.tradex.utils.PriceFeed;
@@ -12,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.io.UncheckedIOException;
 
 public class Main extends Application {
@@ -28,6 +30,13 @@ public class Main extends Application {
         });
         // Fetches live prices every minute (simulated per symbol when unavailable) and seeds history on first run.
         updater = new PriceUpdater(new YahooFinanceProvider(), new StockRepository(), new PriceHistoryRepository(), new MarketService());
+        TradingService trading = new TradingServiceImpl();
+        SnapshotRepository snapshots = new SnapshotRepository();
+        updater.addHook(trading::processPendingOrders);
+        updater.addHook(() -> {
+            LocalDateTime now = LocalDateTime.now();
+            snapshots.recordAll(now.withMinute(now.getMinute() / 15 * 15).withSecond(0).withNano(0));
+        });
         updater.start(60, r -> Platform.runLater(() -> PriceFeed.publish(
                 r.isLive() ? (r.simulated() == 0 ? "● Live prices" : "● Live prices (" + r.simulated() + " simulated)")
                            : "● Simulated prices")));

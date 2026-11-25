@@ -14,10 +14,10 @@ import javafx.scene.control.*;
 
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.function.Supplier;
 
 public class MarketController {
-    @FXML private TextField search, qty;
+    @FXML private TextField search, qty, priceField;
+    @FXML private ChoiceBox<OrderType> orderType;
     @FXML private TableView<Quote> table;
     @FXML private Label nameLabel, priceLabel, changeLabel, message;
     @FXML private LineChart<String, Number> chart;
@@ -45,6 +45,12 @@ public class MarketController {
         chart.setCreateSymbols(false);
         chart.setAnimated(false);
         chart.setLegendVisible(false);
+        orderType.setItems(FXCollections.observableArrayList(OrderType.values()));
+        orderType.setValue(OrderType.MARKET);
+        priceField.visibleProperty().bind(orderType.valueProperty().isNotEqualTo(OrderType.MARKET));
+        priceField.managedProperty().bind(priceField.visibleProperty());
+        orderType.valueProperty().addListener((o, a, t) ->
+                priceField.setPromptText(t == OrderType.STOP_LOSS ? "Trigger price (sell)" : "Limit price"));
         setTradeEnabled(false);
 
         table.getSelectionModel().selectedItemProperty().addListener((o, a, q) -> { if (q != null) select(q); });
@@ -92,19 +98,38 @@ public class MarketController {
         }, this::fail);
     }
 
-    @FXML private void onBuy() { trade(() -> trading.buy(uid, selected.symbol(), parseQty()), "Bought"); }
-    @FXML private void onSell() { trade(() -> trading.sell(uid, selected.symbol(), parseQty()), "Sold"); }
+    @FXML private void onBuy() { submit(Side.BUY); }
+    @FXML private void onSell() { submit(Side.SELL); }
 
-    private interface TradeCall { Transaction call() throws Exception; }
-
-    private void trade(TradeCall call, String verb) {
+    /** Market orders execute now; limit and stop-loss orders are queued until the price condition is met. */
+    private void submit(Side side) {
+        if (selected == null) return;
         final int q;
         try { q = parseQty(); } catch (NumberFormatException e) { fail("Enter a whole number of shares"); return; }
+        final String sym = selected.symbol();
+        final OrderType type = orderType.getValue();
+        final java.math.BigDecimal trigger;
+        if (type == OrderType.MARKET) {
+            trigger = null;
+        } else {
+            try { trigger = new java.math.BigDecimal(priceField.getText().trim()); }
+            catch (NumberFormatException e) { fail("Enter a valid price"); return; }
+        }
         setTradeEnabled(false);
-        Async.run(() -> { Transaction t = call.call(); return new Object[]{t, trading.getBalance(uid)}; }, r -> {
-            Transaction t = (Transaction) r[0];
+        Async.run(() -> {
+            if (type == OrderType.MARKET) {
+                Transaction t = side == Side.BUY ? trading.buy(uid, sym, q) : trading.sell(uid, sym, q);
+                return new Object[]{"%s %d × %s at %s".formatted(side == Side.BUY ? "Bought" : "Sold", q, sym, Fmt.money(t.price())),
+                        trading.getBalance(uid)};
+            }
+            OrderRecord o = trading.placeConditionalOrder(uid, sym, side, type, q, trigger);
+            String what = (type == OrderType.LIMIT ? "Limit " : "Stop-loss ") + side.name().toLowerCase();
+            String state = o.status() == OrderStatus.EXECUTED ? " (filled immediately)" : " (pending, see Orders)";
+            return new Object[]{"%s order placed: %d × %s @ %s%s".formatted(what, q, sym, Fmt.money(o.triggerPrice()), state),
+                    trading.getBalance(uid)};
+        }, r -> {
             Session.balanceProperty().set((java.math.BigDecimal) r[1]);
-            ok(verb + " " + t.quantity() + " × " + t.symbol() + " at " + Fmt.money(t.price()));
+            ok((String) r[0]);
             setTradeEnabled(true);
         }, msg -> { fail(msg); setTradeEnabled(true); });
     }

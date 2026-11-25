@@ -41,7 +41,7 @@ class FxmlLoadIT {
     }
 
     @org.junit.jupiter.params.ParameterizedTest
-    @org.junit.jupiter.params.provider.ValueSource(strings = {"login", "shell", "dashboard", "market", "portfolio", "watchlist", "transactions"})
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"login", "shell", "dashboard", "market", "portfolio", "watchlist", "transactions", "orders", "analytics", "leaderboard", "admin"})
     void viewLoads(String view) throws Exception {
         AtomicReference<Throwable> err = new AtomicReference<>();
         CountDownLatch done = new CountDownLatch(1);

@@ -10,7 +10,11 @@
       <Button fx:id="navMarket" text="Market" onAction="#onMarket" styleClass="nav" maxWidth="Infinity"/>
       <Button fx:id="navPortfolio" text="Portfolio" onAction="#onPortfolio" styleClass="nav" maxWidth="Infinity"/>
       <Button fx:id="navWatchlist" text="Watchlist" onAction="#onWatchlist" styleClass="nav" maxWidth="Infinity"/>
+      <Button fx:id="navOrders" text="Orders" onAction="#onOrders" styleClass="nav" maxWidth="Infinity"/>
       <Button fx:id="navTransactions" text="Transactions" onAction="#onTransactions" styleClass="nav" maxWidth="Infinity"/>
+      <Button fx:id="navAnalytics" text="Analytics" onAction="#onAnalytics" styleClass="nav" maxWidth="Infinity"/>
+      <Button fx:id="navLeaderboard" text="Leaderboard" onAction="#onLeaderboard" styleClass="nav" maxWidth="Infinity"/>
+      <Button fx:id="navAdmin" text="Admin" onAction="#onAdmin" styleClass="nav" maxWidth="Infinity"/>
       <Region VBox.vgrow="ALWAYS"/>
       <Label fx:id="userLabel" styleClass="muted"/>
       <Button text="Log out" onAction="#onLogout" styleClass="ghost" maxWidth="Infinity"/>

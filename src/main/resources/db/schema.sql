@@ -82,3 +82,12 @@ INSERT IGNORE INTO stocks (symbol, name, current_price) VALUES
  ('TATAMOTORS','Tata Motors',950.00),('MARUTI','Maruti Suzuki',12500.00),
  ('ASIANPAINT','Asian Paints',2900.00),('HINDUNILVR','Hindustan Unilever',2400.00),
  ('SUNPHARMA','Sun Pharma',1700.00);
+
+-- Portfolio value over time (one row per user per 15-minute bucket) for the analytics chart.
+CREATE TABLE IF NOT EXISTS portfolio_snapshots (
+  user_id     BIGINT NOT NULL,
+  bucket      DATETIME NOT NULL,
+  total_value DECIMAL(15,2) NOT NULL,
+  PRIMARY KEY (user_id, bucket),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
