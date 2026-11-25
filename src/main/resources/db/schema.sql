@@ -73,3 +73,12 @@ CREATE TABLE IF NOT EXISTS price_history (
   INDEX idx_symbol_time (symbol, recorded_at),
   FOREIGN KEY (symbol) REFERENCES stocks(symbol)
 );
+
+INSERT IGNORE INTO stocks (symbol, name, current_price) VALUES
+ ('RELIANCE','Reliance Industries',2850.00),('TCS','Tata Consultancy Services',3900.00),
+ ('INFY','Infosys',1650.00),('HDFCBANK','HDFC Bank',1620.00),('ICICIBANK','ICICI Bank',1180.00),
+ ('SBIN','State Bank of India',780.00),('ITC','ITC Limited',430.00),('WIPRO','Wipro',480.00),
+ ('BHARTIARTL','Bharti Airtel',1540.00),('LT','Larsen & Toubro',3600.00),
+ ('TATAMOTORS','Tata Motors',950.00),('MARUTI','Maruti Suzuki',12500.00),
+ ('ASIANPAINT','Asian Paints',2900.00),('HINDUNILVR','Hindustan Unilever',2400.00),
+ ('SUNPHARMA','Sun Pharma',1700.00);

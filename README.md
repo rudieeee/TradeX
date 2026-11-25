@@ -9,13 +9,14 @@ brew install maven mysql && brew services start mysql
 mysql -uroot -e "CREATE DATABASE tradex; CREATE USER 'tradex'@'localhost' IDENTIFIED BY 'tradex'; GRANT ALL ON tradex.* TO 'tradex'@'localhost';"
 mysql -uroot tradex < src/main/resources/db/schema.sql
 mvn javafx:run      # run the app
-mvn test            # unit + DB integration tests
+mvn test                  # unit tests
+mvn test -Dtest='*IT'     # DB integration tests (need MySQL)
 ```
 Override DB settings with `TRADEX_DB_URL`, `TRADEX_DB_USER`, `TRADEX_DB_PASSWORD`.
 
 ## Progress
 - [x] Phase 1: project setup, MySQL schema, login/registration (PBKDF2 password hashing)
-- [ ] Phase 2: wallet, buy/sell, transactions
+- [x] Phase 2: wallet, buy/sell engine (atomic, row-locked), transaction history
 - [ ] Phase 3: dashboard, portfolio, watchlist, charts
 - [ ] Phase 4: market API, background price updates
 - [ ] Phase 5: limit/stop-loss orders, leaderboard, analytics
